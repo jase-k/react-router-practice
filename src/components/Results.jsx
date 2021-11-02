@@ -15,18 +15,27 @@ const Results = () => {
     let url = "https://swapi.dev/api/"+param+"/"+num
     useEffect(() => {
         axios.get(url)
-        .then(response => setData(response.data))
+        .then(response => {
+            let responseData = response.data
+            responseData.error = false
+            setData(responseData)
+        })
         .then(console.log(data))
-        
-    }, []);
+        .catch(setData({
+            error: true
+        }))
+    }, [url]);
     return (
         <>
             <h2>{data.name}</h2>
-            {(param === "planets") ?
-                <Planet data={data}/>
-                : (param ==="people") ?
-                    <People data={data} />
-                    : < Starships data={data} />
+            {data.error ?
+                <p>Couldn't Find What you are looking for!</p>
+                :(param === "planets") ?
+                    <Planet data={data}/>
+                    : (param ==="people") ?
+                        <People data={data} />
+                        : < Starships data={data} />
+                    
             }
         </>
     );
